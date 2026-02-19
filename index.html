@@ -1,30 +1,155 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Fitness Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  </head>
-  <body class="p-8">
-    <div id="root"></div>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Tracker</title>
 
-    <script type="text/babel">
-      function App() {
-        return (
-          <div className="max-w-xl mx-auto bg-white border rounded-2xl p-6">
-            <h1 className="text-2xl font-semibold">IT WORKS ✅</h1>
-            <p className="mt-2 text-slate-600">
-              GitHub Pages is loading your HTML + React correctly. Next we paste in the full tracker.
-            </p>
-          </div>
-        );
-      }
-      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-    </script>
-  </body>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f8fafc;
+  margin: 0;
+  padding: 20px;
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+button {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin: 4px;
+}
+.primary { background:#111; color:white; }
+.outline { background:white; border:1px solid #ddd; }
+.badge {
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:20px;
+  background:#eee;
+  font-size:12px;
+  margin-left:6px;
+}
+.grid {
+  display:grid;
+  grid-template-columns: repeat(7,1fr);
+  gap:6px;
+}
+.day {
+  background:white;
+  border-radius:10px;
+  padding:6px;
+  font-size:12px;
+  cursor:pointer;
+}
+.done { background:#d1fae5; }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>Fitness Tracker</h2>
+<p>Weekly plan + daily plank</p>
+
+<div id="streak"></div>
+<div id="plankStatus"></div>
+
+<button class="primary" onclick="startPlank()">Start 60s Plank</button>
+<button class="outline" onclick="markPlank()">Mark Complete</button>
+</div>
+
+<div class="card">
+<h3>Workout Schedule</h3>
+<div id="schedule"></div>
+</div>
+
+<div class="card">
+<h3>Calendar</h3>
+<div class="grid" id="calendar"></div>
+</div>
+
+<script>
+let plankDone = JSON.parse(localStorage.getItem("plankDone") || "[]");
+let workouts = JSON.parse(localStorage.getItem("workouts") || "{}");
+
+const WEEK = {
+0:"Yoga + Walk",
+1:"Bike Bootcamp",
+2:"Barre/Pilates + Walk",
+3:"Strength",
+4:"Core + Pilates + Walk",
+5:"Bike Bootcamp",
+6:"Long Peloton Ride"
+};
+
+function todayISO(){
+ const d=new Date();
+ return d.toISOString().slice(0,10);
+}
+
+function save(){
+ localStorage.setItem("plankDone", JSON.stringify(plankDone));
+ localStorage.setItem("workouts", JSON.stringify(workouts));
+}
+
+function markPlank(){
+ const t=todayISO();
+ if(!plankDone.includes(t)){
+   plankDone.push(t);
+   save();
+   render();
+ }
+}
+function startPlank(){
+ alert("Hold plank for 60 seconds 💪");
+}
+
+function toggleWorkout(date){
+ workouts[date] = !workouts[date];
+ save();
+ render();
+}
+
+function render(){
+ const streak = plankDone.length;
+ document.getElementById("streak").innerHTML =
+   "Planks completed: <b>"+streak+"</b>";
+
+ const today = todayISO();
+ document.getElementById("plankStatus").innerHTML =
+   plankDone.includes(today)
+   ? "<span class='badge'>Done today</span>"
+   : "<span class='badge'>Not yet</span>";
+
+ // schedule
+ const day = new Date().getDay();
+ document.getElementById("schedule").innerHTML =
+   WEEK[day];
+
+ // calendar
+ const cal = document.getElementById("calendar");
+ cal.innerHTML="";
+ for(let i=0;i<30;i++){
+   const d=new Date();
+   d.setDate(d.getDate()-i);
+   const iso=d.toISOString().slice(0,10);
+   const div=document.createElement("div");
+   div.className="day "+(workouts[iso]?"done":"");
+   div.innerHTML=d.getDate();
+   div.onclick=()=>toggleWorkout(iso);
+   cal.appendChild(div);
+ }
+}
+
+render();
+</script>
+
+</body>
 </html>
-
