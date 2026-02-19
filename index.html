@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Fitness Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <noscript><p class="error-text">JavaScript is required to load the interactive tracker.</p></noscript>
+      <header class="card">
+        <h1>Daily Fitness Tracker</h1>
+        <p class="muted">Simple offline tracker for your plank + weekly workouts.</p>
+      </header>
+
+      <section class="card" aria-labelledby="plank-title">
+        <h2 id="plank-title">60-Second Plank Timer</h2>
+        <div class="timer-wrap">
+          <div class="timer" id="timer" aria-live="polite">01:00</div>
+          <div class="controls">
+            <button id="startPauseBtn" type="button">Start</button>
+            <button id="resetBtn" type="button" class="secondary">Reset</button>
+          </div>
+        </div>
+        <div class="completion-row">
+          <button id="markPlankBtn" type="button">Mark Plank Complete Today</button>
+          <p id="plankStatus" class="muted"></p>
+        </div>
+      </section>
+
+      <section class="card stats" aria-label="Plank stats">
+        <div>
+          <p class="label">Current Streak</p>
+          <p class="value" id="streakValue">0 days</p>
+        </div>
+        <div>
+          <p class="label">Total Plank Completions</p>
+          <p class="value" id="totalValue">0</p>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="weekly-title">
+        <h2 id="weekly-title">Weekly Workout Plan</h2>
+        <p class="muted" id="startDateText"></p>
+        <ul class="weekly-list" id="weeklyList"></ul>
+      </section>
+
+      <section class="card" aria-labelledby="calendar-title">
+        <div class="calendar-head">
+          <h2 id="calendar-title">Workout Calendar</h2>
+          <div class="month-nav">
+            <button id="prevMonth" class="secondary" type="button">◀</button>
+            <p id="monthLabel"></p>
+            <button id="nextMonth" class="secondary" type="button">▶</button>
+          </div>
+        </div>
+        <div class="weekday-row" id="weekdayRow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div id="calendarGrid" class="calendar-grid"><p class="muted tiny">Loading your calendar…</p></div>
+        <p class="muted tiny">Tap a day to toggle Workout and Plank check-offs.</p>
+      </section>
+
+      <section class="card" aria-labelledby="sync-title">
+        <h2 id="sync-title">Manual Device Sync</h2>
+        <div class="controls wrap">
+          <button id="exportBtn" type="button">Export Data</button>
+          <label class="import-label">
+            Import Data
+            <input id="importInput" type="file" accept="application/json" />
+          </label>
+        </div>
+        <p class="muted tiny">No account needed. Data is saved in your browser and can be transferred with export/import.</p>
+      </section>
+    </main>
+
+    <template id="dayCellTemplate">
+      <article class="day-cell">
+        <div class="day-top">
+          <span class="day-number"></span>
+        </div>
+        <p class="workout-text"></p>
+        <div class="checks">
+          <button class="chip workout-chip" type="button">Workout</button>
+          <button class="chip plank-chip" type="button">Plank</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
