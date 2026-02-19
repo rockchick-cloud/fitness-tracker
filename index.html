@@ -6,49 +6,15 @@
 <title>Fitness Tracker</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f8fafc;
-  margin: 0;
-  padding: 20px;
-}
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
-button {
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  margin: 4px;
-}
-.primary { background:#111; color:white; }
-.outline { background:white; border:1px solid #ddd; }
-.badge {
-  display:inline-block;
-  padding:4px 10px;
-  border-radius:20px;
-  background:#eee;
-  font-size:12px;
-  margin-left:6px;
-}
-.grid {
-  display:grid;
-  grid-template-columns: repeat(7,1fr);
-  gap:6px;
-}
-.day {
-  background:white;
-  border-radius:10px;
-  padding:6px;
-  font-size:12px;
-  cursor:pointer;
-}
-.done { background:#d1fae5; }
+body {font-family: Arial; background:#f8fafc; padding:20px;}
+.card {background:white;padding:20px;margin-bottom:20px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.05);}
+button {padding:10px;border-radius:10px;border:none;margin:5px;cursor:pointer;}
+.primary {background:black;color:white;}
+.outline {background:white;border:1px solid #ccc;}
+.badge {background:#eee;padding:4px 8px;border-radius:20px;font-size:12px;margin-left:5px;}
+.grid {display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.day {padding:6px;background:white;border-radius:8px;cursor:pointer;text-align:center;}
+.done {background:#bbf7d0;}
 </style>
 </head>
 
@@ -56,17 +22,14 @@ button {
 
 <div class="card">
 <h2>Fitness Tracker</h2>
-<p>Weekly plan + daily plank</p>
-
 <div id="streak"></div>
-<div id="plankStatus"></div>
-
+<div id="today"></div>
 <button class="primary" onclick="startPlank()">Start 60s Plank</button>
 <button class="outline" onclick="markPlank()">Mark Complete</button>
 </div>
 
 <div class="card">
-<h3>Workout Schedule</h3>
+<h3>Workout Today</h3>
 <div id="schedule"></div>
 </div>
 
@@ -76,6 +39,7 @@ button {
 </div>
 
 <script>
+
 let plankDone = JSON.parse(localStorage.getItem("plankDone") || "[]");
 let workouts = JSON.parse(localStorage.getItem("workouts") || "{}");
 
@@ -90,8 +54,7 @@ const WEEK = {
 };
 
 function todayISO(){
- const d=new Date();
- return d.toISOString().slice(0,10);
+ return new Date().toISOString().slice(0,10);
 }
 
 function save(){
@@ -99,57 +62,43 @@ function save(){
  localStorage.setItem("workouts", JSON.stringify(workouts));
 }
 
-function markPlank(){
- const t=todayISO();
- if(!plankDone.includes(t)){
-   plankDone.push(t);
-   save();
-   render();
- }
-}
 function startPlank(){
  alert("Hold plank for 60 seconds 💪");
 }
 
+function markPlank(){
+ const t=todayISO();
+ if(!plankDone.includes(t)){
+  plankDone.push(t);
+  save();
+  render();
+ }
+}
+
 function toggleWorkout(date){
- workouts[date] = !workouts[date];
+ workouts[date]=!workouts[date];
  save();
  render();
 }
 
 function render(){
- const streak = plankDone.length;
- document.getElementById("streak").innerHTML =
-   "Planks completed: <b>"+streak+"</b>";
 
- const today = todayISO();
- document.getElementById("plankStatus").innerHTML =
-   plankDone.includes(today)
-   ? "<span class='badge'>Done today</span>"
-   : "<span class='badge'>Not yet</span>";
+ const today=todayISO();
 
- // schedule
- const day = new Date().getDay();
- document.getElementById("schedule").innerHTML =
-   WEEK[day];
+ document.getElementById("streak").innerHTML=
+ "Planks completed: <b>"+plankDone.length+"</b>";
 
- // calendar
- const cal = document.getElementById("calendar");
+ document.getElementById("today").innerHTML=
+ plankDone.includes(today)
+ ? "<span class='badge'>Done today</span>"
+ : "<span class='badge'>Not yet</span>";
+
+ document.getElementById("schedule").innerHTML=
+ WEEK[new Date().getDay()];
+
+ const cal=document.getElementById("calendar");
  cal.innerHTML="";
+
  for(let i=0;i<30;i++){
-   const d=new Date();
-   d.setDate(d.getDate()-i);
-   const iso=d.toISOString().slice(0,10);
-   const div=document.createElement("div");
-   div.className="day "+(workouts[iso]?"done":"");
-   div.innerHTML=d.getDate();
-   div.onclick=()=>toggleWorkout(iso);
-   cal.appendChild(div);
- }
-}
+  const d=new Date()
 
-render();
-</script>
-
-</body>
-</html>
