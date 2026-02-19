@@ -39,66 +39,96 @@ button {padding:10px;border-radius:10px;border:none;margin:5px;cursor:pointer;}
 </div>
 
 <script>
+  // ---- storage ----
+  const KEY_PLANK = "plankDone";
+  const KEY_WORKOUTS = "workouts";
 
-let plankDone = JSON.parse(localStorage.getItem("plankDone") || "[]");
-let workouts = JSON.parse(localStorage.getItem("workouts") || "{}");
+  let plankDone = JSON.parse(localStorage.getItem(KEY_PLANK) || "[]");
+  let workouts = JSON.parse(localStorage.getItem(KEY_WORKOUTS) || "{}");
 
-const WEEK = {
-0:"Yoga + Walk",
-1:"Bike Bootcamp",
-2:"Barre/Pilates + Walk",
-3:"Strength",
-4:"Core + Pilates + Walk",
-5:"Bike Bootcamp",
-6:"Long Peloton Ride"
-};
+  // 0=Sun ... 6=Sat (JS default)
+  const WEEK = {
+    6: "Long Peloton Ride (60+ min)",
+    0: "Yoga (20–30 min) + Walk (30 min)",
+    1: "Bike Bootcamp",
+    2: "Barre or Pilates (20 min) + Walk (30 min)",
+    3: "Strength (30 min)",
+    4: "Core (10 min) + Pilates (10 min) + Walk or Jog (30 min)",
+    5: "Bike Bootcamp",
+  };
 
-function todayISO(){
- return new Date().toISOString().slice(0,10);
-}
+  function iso(d) {
+    return d.toISOString().slice(0, 10);
+  }
 
-function save(){
- localStorage.setItem("plankDone", JSON.stringify(plankDone));
- localStorage.setItem("workouts", JSON.stringify(workouts));
-}
+  function todayISO() {
+    return iso(new Date());
+  }
 
-function startPlank(){
- alert("Hold plank for 60 seconds 💪");
-}
+  function save() {
+    localStorage.setItem(KEY_PLANK, JSON.stringify(plankDone));
+    localStorage.setItem(KEY_WORKOUTS, JSON.stringify(workouts));
+  }
 
-function markPlank(){
- const t=todayISO();
- if(!plankDone.includes(t)){
-  plankDone.push(t);
-  save();
+  // ---- plank actions ----
+  function startPlank() {
+    alert("Hold plank for 60 seconds 💪\n(You can keep this simple or we can add a real timer next.)");
+  }
+
+  function markPlank() {
+    const t = todayISO();
+    if (!plankDone.includes(t)) {
+      plankDone.push(t);
+      save();
+      render();
+    }
+  }
+
+  // ---- workout actions ----
+  function toggleWorkout(date) {
+    workouts[date] = !workouts[date];
+    save();
+    render();
+  }
+
+  // ---- UI render ----
+  function render() {
+    // Streak + today status
+    const streakEl = document.getElementById("streak");
+    const todayEl = document.getElementById("today");
+    const scheduleEl = document.getElementById("schedule");
+    const calEl = document.getElementById("calendar");
+
+    const t = todayISO();
+    streakEl.innerHTML = `Planks completed: <b>${plankDone.length}</b>`;
+    todayEl.innerHTML = plankDone.includes(t)
+      ? `<span class="badge">Done today</span>`
+      : `<span class="badge">Not yet</span>`;
+
+    // Workout Today
+    const dow = new Date().getDay();
+    scheduleEl.textContent = WEEK[dow] || "Rest / Your choice";
+
+    // Calendar (last 30 days)
+    calEl.innerHTML = "";
+    for (let i = 0; i < 30; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dISO = iso(d);
+
+      const div = document.createElement("div");
+      div.className = "day" + (workouts[dISO] ? " done" : "");
+      div.innerHTML = `${d.getDate()}`;
+      div.title = dISO + (workouts[dISO] ? " (Workout checked)" : " (Tap to check off)");
+      div.onclick = () => toggleWorkout(dISO);
+
+      calEl.appendChild(div);
+    }
+  }
+
+  // Make functions available to your buttons
+  window.startPlank = startPlank;
+  window.markPlank = markPlank;
+
   render();
- }
-}
-
-function toggleWorkout(date){
- workouts[date]=!workouts[date];
- save();
- render();
-}
-
-function render(){
-
- const today=todayISO();
-
- document.getElementById("streak").innerHTML=
- "Planks completed: <b>"+plankDone.length+"</b>";
-
- document.getElementById("today").innerHTML=
- plankDone.includes(today)
- ? "<span class='badge'>Done today</span>"
- : "<span class='badge'>Not yet</span>";
-
- document.getElementById("schedule").innerHTML=
- WEEK[new Date().getDay()];
-
- const cal=document.getElementById("calendar");
- cal.innerHTML="";
-
- for(let i=0;i<30;i++){
-  const d=new Date()
-
+</script>
