@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitness Tracker - Testing</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #f4f7fb;
+        color: #132033;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #d9e0eb;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      a.button {
+        display: inline-block;
+        background: #215ce5;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 0.55rem 0.9rem;
+        font-weight: 600;
+      }
+      ul { margin-top: 0.4rem; }
+      code { background: #eef2fb; padding: 0.15rem 0.35rem; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <h1>Fitness Tracker Testing Page</h1>
+        <p>This page exists so <code>/testing</code> does not return "Not Found".</p>
+        <p><a class="button" href="../index.html">Open Fitness Tracker App</a></p>
+      </section>
+
+      <section class="card">
+        <h2>Quick checks</h2>
+        <ul>
+          <li>Start/pause/reset the 60-second plank timer.</li>
+          <li>Mark plank complete and verify streak/total stats update.</li>
+          <li>Toggle workout/plank chips in the calendar.</li>
+          <li>Export data and re-import it from a JSON file.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
